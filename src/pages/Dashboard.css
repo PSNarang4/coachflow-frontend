@@ -1,0 +1,327 @@
+/* ══════════════════════════════════════════
+   DASHBOARD  —  CoachFlow AI
+   Colour Palette (unified with whole app):
+   --bg-primary:  #0a0a0f  deep black
+   --surface:     #16161f  card surface
+   --accent:      #e8ff47  electric lime (main app)
+   Text:          #f0f0f5
+   Muted:         #8888a0
+   Border:        rgba(255,255,255,0.08)
+══════════════════════════════════════════ */
+
+.dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 48px;
+}
+
+.dashboard-loading {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center; padding: 80px;
+  color: var(--text-muted); font-size: 14px;
+}
+
+/* ══════════════════════════════════════
+   HERO — full photo + info below
+══════════════════════════════════════ */
+.coach-hero {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* Photo area — shows full portrait, NOT cropped */
+.coach-hero-photo {
+  position: relative;
+  width: 100%;
+  /* 3:2 ratio shows a vertical photo fully from top to waist */
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--bg-primary);
+  min-height: 220px;
+}
+
+.coach-hero-layer {
+  position: absolute; inset: 0;
+  background-size: cover;
+  /* top — shows face/top of body */
+  background-position: center top;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+.coach-hero-layer-active { opacity: 1; }
+
+/* Vignette: subtle edges + bottom gradient for text */
+.coach-hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 45%,
+      rgba(10,10,15,0.6) 80%,
+      rgba(22,22,31,1.0) 100%
+    ),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%);
+  pointer-events: none;
+}
+
+.coach-hero-top-badges {
+  position: absolute; top: 14px; left: 16px; z-index: 2;
+}
+.coach-hero-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(10,10,15,0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.85); letter-spacing: 0.04em;
+}
+
+.coach-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #47ffa4;
+  box-shadow: 0 0 8px rgba(71,255,164,0.8);
+  animation: status-pulse 2s ease-in-out infinite;
+  flex-shrink: 0; display: inline-block;
+}
+@keyframes status-pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.6; transform:scale(0.8); }
+}
+
+/* ── Info block below the hero photo ── */
+.coach-info-below {
+  padding: 20px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.coach-greeting {
+  font-size: 11px; color: var(--accent);
+  font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.coach-name {
+  font-family: var(--font-display);
+  font-size: 30px; letter-spacing: 0.04em;
+  color: #fff; line-height: 1; margin: 0;
+}
+.coach-biz    { font-size: 13px; color: var(--text-muted); }
+.coach-tagline{ font-size: 13px; color: rgba(255,255,255,0.35); font-style: italic; }
+.coach-divider{ height: 1px; background: var(--border); }
+
+/* Stats row */
+.coach-stats-mini {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: fit-content;
+}
+.coach-mini-stat {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 22px; gap: 2px;
+}
+.coach-mini-val {
+  font-family: var(--font-display);
+  font-size: 24px; color: var(--accent); letter-spacing: 0.04em;
+}
+.coach-mini-lbl {
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.coach-mini-sep { width:1px; height:36px; background:var(--border); flex-shrink:0; }
+
+/* Link section */
+.coach-link-section { display: flex; flex-direction: column; gap: 6px; }
+.coach-link-label {
+  font-size: 10px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  display: flex; align-items: center; gap: 8px;
+}
+.coach-slug-badge {
+  background: rgba(232,255,71,0.1); color: var(--accent);
+  border: 1px solid rgba(232,255,71,0.2);
+  padding: 2px 8px; border-radius: 6px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+}
+.coach-link-row   { display: flex; gap: 8px; align-items: center; }
+.coach-link-box   {
+  flex: 1; background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px; overflow: hidden;
+}
+.coach-link-text  {
+  font-size: 11px; color: var(--accent);
+  font-family: monospace;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
+}
+
+.coach-powered {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display);
+  font-size: 11px; letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.18); margin-top: 4px;
+}
+.coach-powered strong { color: var(--accent); }
+
+/* ══════════════════════════════════════
+   STATS GRID
+══════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--stat-color, var(--accent));
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: var(--transition);
+}
+.stat-card:hover { background: var(--bg-card-hover); }
+.stat-icon  { color: var(--stat-color, var(--accent)); opacity: 0.7; }
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 32px; letter-spacing: 0.04em; color: #fff; line-height: 1;
+}
+.stat-label {
+  font-size: 11px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* ══════════════════════════════════════
+   CONTENT ROW
+══════════════════════════════════════ */
+.dashboard-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+}
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 15px; letter-spacing: 0.06em; color: #fff;
+}
+
+/* Pipeline */
+.pipeline-bars { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.pipeline-row  { display: flex; align-items: center; gap: 10px; }
+.pipeline-label{
+  display: flex; align-items: center; gap: 7px;
+  width: 88px; flex-shrink: 0;
+  font-size: 12px; color: var(--text-secondary);
+}
+.pipeline-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.pipeline-track{
+  flex:1; height:6px;
+  background: rgba(255,255,255,0.06); border-radius:3px; overflow:hidden;
+}
+.pipeline-fill {
+  height:100%; border-radius:3px;
+  transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.pipeline-count{ font-size:12px; color:var(--text-muted); width:24px; text-align:right; flex-shrink:0; }
+
+/* Recent leads */
+.recent-list { display: flex; flex-direction: column; gap: 0; }
+.recent-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.recent-item:last-child { border-bottom: none; }
+.recent-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #47b4ff);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 15px;
+  color: #0a0a0f; font-weight: 900; flex-shrink: 0;
+}
+.recent-info  { flex:1; min-width:0; }
+.recent-name  { font-size:13px; font-weight:600; color:#fff; }
+.recent-contact {
+  font-size:11px; color:var(--text-muted);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;
+}
+.recent-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+.recent-score { font-size:10px; font-weight:700; }
+.recent-date  { font-size:11px; color:var(--text-muted); flex-shrink:0; }
+
+/* Badges */
+.badge {
+  font-size:10px; font-weight:700; padding:3px 8px;
+  border-radius:6px; text-transform:capitalize; white-space:nowrap;
+}
+.badge-new       { background:var(--status-new-bg);       color:var(--status-new); }
+.badge-contacted { background:var(--status-contacted-bg); color:var(--status-contacted); }
+.badge-qualified { background:var(--status-qualified-bg); color:var(--status-qualified); }
+.badge-closed    { background:var(--status-closed-bg);    color:var(--status-closed); }
+.badge-lost      { background:var(--status-lost-bg);      color:var(--status-lost); }
+
+/* AI Teaser */
+.dashboard-ai-teaser { }
+.ai-teaser-insight { display:flex; align-items:flex-start; gap:14px; margin-top:10px; }
+.ai-teaser-num {
+  font-family:var(--font-display); font-size:20px;
+  color:rgba(232,255,71,0.2); flex-shrink:0;
+}
+.ai-teaser-insight p { font-size:14px; color:rgba(255,255,255,0.6); line-height:1.6; }
+
+/* Empty state */
+.empty-state {
+  display:flex; flex-direction:column; align-items:center;
+  gap:10px; padding:36px 20px; text-align:center; color:rgba(255,255,255,0.2);
+}
+.empty-state p { font-size:13px; color:var(--text-muted); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .coach-hero-photo { aspect-ratio: 16 / 9; }
+  .dashboard-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  /* On phones: compact hero — stats visible above fold */
+  .coach-hero-photo { aspect-ratio: 21 / 9; min-height: 140px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-value { font-size: 26px; }
+  .stat-card  { padding: 14px 12px; }
+  .coach-stats-mini { width: 100%; }
+  .coach-mini-stat  { flex: 1; padding: 8px 10px; min-width: 0; }
+  /* Hide separators on mobile to prevent ugly stacking */
+  .coach-mini-sep { display: none; }
+  .coach-info-below { padding: 14px 16px 16px; gap: 8px; }
+  .coach-name { font-size: 22px; }
+  .card { padding: 16px; }
+  .coach-greeting { font-size: 10px; }
+  .coach-biz { font-size: 12px; }
+  .coach-tagline { font-size: 12px; }
+}
+
+@media (max-width: 420px) {
+  .coach-hero-photo { aspect-ratio: 3 / 1; min-height: 120px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .coach-mini-stat { padding: 6px 8px; }
+  .coach-mini-val  { font-size: 18px; }
+  .coach-name { font-size: 20px; }
+}

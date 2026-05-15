@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a26;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d0d14;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="boltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8ff47;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#b8cf17;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Hexagon background -->
+  <polygon
+    points="50,4 92,27 92,73 50,96 8,73 8,27"
+    fill="url(#hexGrad)"
+    stroke="#e8ff47"
+    stroke-width="2.5"
+  />
+  <!-- Inner hexagon ring -->
+  <polygon
+    points="50,12 84,31 84,69 50,88 16,69 16,31"
+    fill="none"
+    stroke="rgba(232,255,71,0.15)"
+    stroke-width="1"
+  />
+  <!-- Lightning bolt — centred in hexagon -->
+  <polygon
+    points="56,18 38,52 50,52 44,82 62,48 50,48"
+    fill="url(#boltGrad)"
+  />
+</svg>

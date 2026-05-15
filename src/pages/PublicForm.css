@@ -1,0 +1,543 @@
+/* ══════════════════════════════════════════════════════
+   PUBLIC FORM  —  CoachFlow AI
+   Colour Palette (matches whole app):
+   Background:  #0a0a0f
+   Card:        #16161f
+   Accent:      #e8ff47
+   Text:        #ffffff / rgba(255,255,255,0.6)
+   Border:      rgba(255,255,255,0.08)
+══════════════════════════════════════════════════════ */
+
+* { box-sizing: border-box; }
+
+.pf-root {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Loading ── */
+.pf-loading-screen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-primary);
+}
+.pf-spinner {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.08);
+  border-top-color: var(--accent);
+  animation: pf-spin 0.8s linear infinite;
+}
+@keyframes pf-spin { to { transform: rotate(360deg); } }
+
+/* ─── Not Found ── */
+.pf-not-found {
+  min-height: 100vh; display: flex;
+  align-items: center; justify-content: center;
+  background: var(--bg-primary); padding: 20px;
+}
+.pf-nf-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 48px 36px;
+  text-align: center; max-width: 380px;
+}
+.pf-nf-card span { font-size: 48px; display: block; margin-bottom: 16px; }
+.pf-nf-card h2   { font-size: 24px; color: #fff; margin-bottom: 10px; }
+.pf-nf-card p    { font-size: 14px; color: rgba(255,255,255,0.45); }
+
+/* ─── Submitted ── */
+.pf-submitted {
+  min-height: 100vh; display: flex;
+  align-items: center; justify-content: center;
+  background: var(--bg-primary); padding: 20px;
+}
+.pf-submitted-card {
+  background: var(--surface); border: 1px solid rgba(71,255,164,0.2);
+  border-radius: 20px; padding: 52px 36px;
+  text-align: center; max-width: 420px;
+}
+.pf-submitted-check {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(71,255,164,0.1); border: 2px solid rgba(71,255,164,0.3);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; color: #47ffa4;
+}
+.pf-submitted-card h2    { font-size: 26px; margin-bottom: 12px; }
+.pf-submitted-card p     { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; }
+.pf-submitted-card strong{ color: var(--accent); }
+
+/* ─── Top Nav ── */
+.pf-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  background: rgba(10,10,15,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: sticky; top: 0; z-index: 100;
+}
+.pf-nav-brand { display: flex; align-items: center; gap: 10px; }
+.pf-nav-logo {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900; color: var(--bg-primary); flex-shrink: 0;
+}
+.pf-nav-name { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.2; }
+.pf-nav-sub  {
+  font-size: 10px; color: rgba(255,255,255,0.35);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.pf-nav-back {
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  text-decoration: none; transition: color 0.2s;
+}
+.pf-nav-back:hover { color: #fff; }
+
+/* ══════════════════════════════════════
+   DESKTOP LAYOUT — left photo | right form
+   On mobile: photo on top, form below
+══════════════════════════════════════ */
+.pf-body {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  flex: 1;
+  min-height: calc(100vh - 65px);
+}
+
+/* ─── LEFT: Photo panel — full photo visible, text at bottom ── */
+.pf-left {
+  position: sticky;
+  top: 65px;
+  height: calc(100vh - 65px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pf-photo-wrap {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* Photo fills the panel fully — shows the whole person */
+.pf-photo-layer {
+  position: absolute; inset: 0;
+  background-size: cover;
+  /* Anchor near the top so face/head is always visible, crop from bottom */
+  background-position: center 20%;
+  opacity: 0;
+  transition: opacity 1.3s ease;
+}
+.pf-photo-layer-active { opacity: 1; }
+
+/* Vignette: only darken bottom 20% — top stays clear for photo visibility */
+.pf-photo-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background:
+    /* Bottom gradient for text legibility — starts much lower */
+    linear-gradient(
+      to top,
+      rgba(10,10,15,0.95) 0%,
+      rgba(10,10,15,0.70) 18%,
+      rgba(10,10,15,0.15) 35%,
+      transparent 50%
+    ),
+    /* Vignette edges */
+    radial-gradient(
+      ellipse at center,
+      transparent 50%,
+      rgba(0,0,0,0.25) 100%
+    );
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 26px 24px;
+}
+
+.pf-overlay-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+}
+.pf-overlay-title {
+  font-size: 28px;
+  font-weight: 900; line-height: 1.05; color: #fff;
+  margin-bottom: 12px; text-transform: uppercase;
+}
+.pf-overlay-desc {
+  font-size: 12px; color: rgba(255,255,255,0.6);
+  line-height: 1.6; margin-bottom: 14px; max-width: 320px;
+}
+.pf-overlay-bullets { display: flex; flex-direction: column; gap: 7px; }
+.pf-overlay-bullet {
+  font-size: 12px; color: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 9px 13px;
+}
+
+/* Dots — no pointer events (auto-cycle only) */
+.pf-photo-dots {
+  position: absolute;
+  /* Place in the clear zone — below the photo, above text */
+  bottom: calc(28px + 200px); /* rough mid-point above text */
+  left: 50%; transform: translateX(-50%);
+  z-index: 3; display: flex; gap: 7px;
+  pointer-events: none;
+}
+.pf-photo-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s;
+}
+.pf-photo-dot-active {
+  background: var(--accent); transform: scale(1.5);
+}
+
+.pf-left-footer {
+  padding: 10px 26px;
+  font-size: 10px; color: rgba(255,255,255,0.18);
+  background: var(--bg-primary); text-align: center; letter-spacing: 0.04em;
+}
+
+/* ─── RIGHT: Form panel ── */
+.pf-right {
+  display: flex; flex-direction: column;
+  background: var(--surface);
+  border-left: 1px solid rgba(255,255,255,0.05);
+  min-height: calc(100vh - 65px);
+}
+
+/* Step header */
+.pf-step-header {
+  padding: 22px 30px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.pf-step-label-top {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+}
+.pf-step-desc {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  line-height: 1.6; margin-bottom: 14px; max-width: 520px;
+}
+.pf-step-meta {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 8px;
+}
+.pf-progress-bar {
+  height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden;
+}
+.pf-progress-fill {
+  height: 100%; background: var(--accent);
+  border-radius: 2px; transition: width 0.4s ease;
+}
+
+/* Step content */
+.pf-step-content {
+  flex: 1; padding: 24px 30px 8px; overflow-y: auto;
+}
+.pf-step-card { display: flex; flex-direction: column; gap: 16px; }
+.pf-step-title {
+  font-size: 22px; font-weight: 900; color: #fff;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.pf-step-subtitle {
+  font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.6;
+}
+
+/* Fields */
+.pf-field { display: flex; flex-direction: column; gap: 6px; }
+.pf-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--accent);
+}
+
+.pf-input, .pf-textarea {
+  background: var(--bg-primary);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 11px 14px;
+  transition: border-color 0.2s;
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Calendar icon white */
+.pf-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(100);
+  opacity: 1;
+  cursor: pointer;
+}
+
+/* Firefox */
+.pf-input[type="date"] {
+  color-scheme: dark;
+}
+.pf-input:focus, .pf-textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.pf-input::placeholder, .pf-textarea::placeholder {
+  color: rgba(255,255,255,0.2);
+}
+.pf-textarea { resize: vertical; min-height: 95px; }
+select.pf-input { cursor: pointer; }
+select.pf-input option { background: var(--surface); }
+
+/* DOB calendar icon */
+.pf-input[type="date"] {
+  color-scheme: dark;
+  color: #fff;
+}
+.pf-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) sepia(0.3) saturate(2) hue-rotate(8deg);
+  cursor: pointer;
+  opacity: 0.8;
+  padding: 2px;
+}
+.pf-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Field rows */
+.pf-field-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pf-field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* Radio buttons */
+.pf-radio-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.pf-radio-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 10px;
+  background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer; font-size: 14px; color: rgba(255,255,255,0.65);
+  transition: all 0.15s; user-select: none;
+}
+.pf-radio-btn input { display: none; }
+.pf-radio-btn:hover { border-color: rgba(255,255,255,0.22); }
+.pf-radio-active {
+  border-color: var(--accent) !important;
+  background: rgba(232,255,71,0.08) !important;
+  color: #fff !important;
+}
+
+/* Scale 1-10 */
+.pf-scale-row { display: flex; gap: 5px; flex-wrap: wrap; }
+.pf-scale-btn {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; background: var(--bg-primary);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer; font-size: 13px; font-weight: 600;
+  color: rgba(255,255,255,0.55); transition: all 0.15s;
+  user-select: none;
+}
+.pf-scale-btn input { display: none; }
+.pf-scale-btn:hover { border-color: rgba(255,255,255,0.25); }
+.pf-scale-active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--bg-primary) !important;
+  font-weight: 700;
+}
+
+/* Checkboxes */
+.pf-checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pf-checkbox-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 13px; border-radius: 10px;
+  background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer; font-size: 13px; color: rgba(255,255,255,0.65);
+  transition: all 0.15s; user-select: none;
+}
+.pf-checkbox-btn input { display: none; }
+.pf-checkbox-btn:hover { border-color: rgba(255,255,255,0.22); }
+.pf-checkbox-active {
+  border-color: var(--accent) !important;
+  background: rgba(232,255,71,0.08) !important;
+  color: #fff !important;
+}
+.pf-checkbox-box {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border-radius: 5px; border: 1.5px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.pf-checkbox-active .pf-checkbox-box {
+  background: var(--accent); border-color: var(--accent); color: var(--bg-primary);
+}
+
+/* ─── Nav bar ── */
+.pf-nav-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 30px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: var(--surface);
+  position: sticky; bottom: 0; z-index: 10;
+}
+.pf-nav-left  { flex-shrink: 0; }
+.pf-nav-right { display: flex; gap: 8px; flex-shrink: 0; }
+.pf-nav-hint  {
+  flex: 1; font-size: 11px; color: rgba(255,255,255,0.25);
+  line-height: 1.5; min-width: 0;
+}
+
+.pf-btn-prev, .pf-btn-next, .pf-btn-submit {
+  padding: 11px 18px; border-radius: 50px; border: none;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 700; text-align: center;
+  line-height: 1.3; transition: all 0.2s;
+  white-space: nowrap; min-width: 80px;
+  display: inline-flex; align-items: center;
+  justify-content: center; gap: 6px;
+}
+.pf-btn-prev {
+  background: transparent; color: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.pf-btn-prev:hover:not(:disabled) {
+  color: #fff; border-color: rgba(255,255,255,0.3);
+}
+.pf-btn-disabled { opacity: 0.3; cursor: not-allowed !important; }
+
+.pf-btn-next, .pf-btn-submit {
+  background: var(--accent); color: var(--bg-primary);
+}
+.pf-btn-next:hover, .pf-btn-submit:hover:not(:disabled) {
+  background: #f0ff60; transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(232,255,71,0.3);
+}
+.pf-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ══════════════════════════════════════
+   RESPONSIVE — mobile-first approach
+══════════════════════════════════════ */
+
+/* ── Below 900px: stack layout ── */
+@media (max-width: 900px) {
+  .pf-body {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  /* Photo becomes full-width hero — tall enough to see 80% of portrait photos */
+  .pf-left {
+    position: relative; top: 0;
+    width: 100%;
+    height: 110vw;
+    min-height: 360px;
+    max-height: 560px;
+  }
+
+  /* On tablet keep text visible */
+  .pf-overlay-title   { font-size: 22px; }
+  .pf-overlay-desc    { display: block; }
+  .pf-overlay-bullets { display: flex; }
+  .pf-photo-dots      { bottom: calc(28px + 160px); }
+  .pf-left-footer     { display: none; }
+
+  .pf-right           { border-left: none; border-top: 1px solid rgba(255,255,255,0.05); }
+  .pf-step-header     { padding: 16px 18px 12px; }
+  .pf-step-content    { padding: 16px 18px 8px; }
+  .pf-nav-bar         { padding: 11px 18px; gap: 8px; }
+  .pf-nav-hint        { display: none; }
+}
+
+/* ── Below 600px: phone portrait ── */
+@media (max-width: 600px) {
+  .pf-nav {
+    padding: 11px 14px;
+  }
+  .pf-nav-brand {
+    min-width: 0;
+  }
+  .pf-nav-name {
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pf-nav-back {
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* Photo: portrait height — 80% of photo visible, crop only bottom 20% */
+  .pf-left {
+    width: 100%;
+    height: 115vw;
+    min-height: 340px;
+    max-height: 520px;
+  }
+
+  /* Reduce text overlay height so photo shows more */
+  .pf-photo-overlay { padding: 20px 18px 18px; }
+  .pf-overlay-title { font-size: 19px; margin-bottom: 8px; }
+  .pf-overlay-desc  { font-size: 11px; margin-bottom: 10px; display: none; }
+  .pf-overlay-bullets { display: none; }
+  .pf-photo-dots    { bottom: calc(20px + 80px); }
+
+  .pf-step-header  { padding: 14px 16px 10px; }
+  .pf-step-desc    { display: none; }
+  .pf-step-content { padding: 14px 16px 92px; }
+  .pf-nav-bar {
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    flex-wrap: wrap;
+    gap: 8px;
+    box-shadow: 0 -14px 34px rgba(0,0,0,0.34);
+  }
+
+  .pf-field-row   { grid-template-columns: 1fr; }
+  .pf-field-row-3 { grid-template-columns: 1fr 1fr; }
+  .pf-checkbox-grid { grid-template-columns: 1fr; }
+  .pf-step-title  { font-size: 18px; }
+  .pf-step-desc   { font-size: 12px; }
+  .pf-input,
+  .pf-textarea {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .pf-textarea {
+    min-height: 110px;
+  }
+  .pf-radio-btn,
+  .pf-checkbox-btn {
+    min-height: 48px;
+  }
+  .pf-scale-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .pf-btn-prev, .pf-btn-next, .pf-btn-submit {
+    min-height: 48px;
+    font-size: 12px; padding: 10px 14px; min-width: 70px;
+  }
+  .pf-btn-disabled { display: none; }
+}
+
+/* ── Below 420px: small phones ── */
+@media (max-width: 420px) {
+  .pf-left { width: 100%; height: 110vw; min-height: 320px; max-height: 480px; }
+  .pf-overlay-title { font-size: 17px; }
+
+  .pf-field-row-3   { grid-template-columns: 1fr; }
+  .pf-scale-row     { gap: 4px; }
+  .pf-scale-btn     { width: 44px; height: 44px; font-size: 13px; }
+
+  /* Stack all nav buttons */
+  .pf-nav-bar       { flex-direction: column; align-items: stretch; }
+  .pf-nav-left:has(.pf-btn-disabled) { display: none; }
+  .pf-nav-left      { width: 100%; }
+  .pf-nav-right     { width: 100%; }
+  .pf-btn-prev      { width: 100%; }
+  .pf-btn-next, .pf-btn-submit { flex: 1; }
+}
