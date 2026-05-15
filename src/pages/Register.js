@@ -4,6 +4,7 @@ import API from '../utils/api';
 import toast from 'react-hot-toast';
 import PhotoUploader from '../components/PhotoUploader';
 import PhoneInput from '../components/PhoneInput';
+import { useAuth } from '../context/AuthContext';
 import '../components/PhotoUploader.css';
 import '../components/PhoneInput.css';
 import './Auth.css';
@@ -52,6 +53,7 @@ const PasswordStrength = ({ password }) => {
 // ─── Steps: 1=credentials, 2=photos, 3=email-otp ─────────────────────────
 export default function Register() {
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
 
   const [step,    setStep]    = useState(1);
   const [form,    setForm]    = useState({ name:'', email:'', password:'', businessName:'', phone:'', tagline:'' });
@@ -88,17 +90,40 @@ export default function Register() {
   const initiateRegistration = async (skipPhotos = false) => {
     setLoading(true);
     try {
+      const pendingPhotos = skipPhotos ? [] : photos;
       const { data } = await API.post('/auth/register/initiate', {
         ...form,
         email: form.email.trim().toLowerCase(),
-        photos: skipPhotos ? [] : photos,
+        photos: [],
       });
       setSessionId(data.sessionId);
       if (data.devOTP) setDevOTP(data.devOTP);
       startCooldown();
       setStep(3);
+      if (pendingPhotos.length) {
+        sessionStorage.setItem('cf_pending_signup_photos', JSON.stringify(pendingPhotos));
+      } else {
+        sessionStorage.removeItem('cf_pending_signup_photos');
+      }
       toast.success('OTP sent to your email!');
     } catch (err) {
+      if ([404, 413].includes(err.response?.status)) {
+        try {
+          const { data } = await API.post('/auth/register', {
+            ...form,
+            email: form.email.trim().toLowerCase(),
+            photos: undefined,
+          });
+          if (!data.token || !data.user) throw new Error('Legacy registration failed');
+          setAuth(data.token, data.user);
+          toast.success('Account created!');
+          navigate('/dashboard');
+          return;
+        } catch (legacyErr) {
+          toast.error(legacyErr.response?.data?.message || legacyErr.response?.data?.error || 'Registration failed');
+          return;
+        }
+      }
       const msg = err.response?.data?.message || 'Failed to send OTP';
       toast.error(msg);
       if (msg.includes('already registered')) navigate('/login');
@@ -114,6 +139,22 @@ export default function Register() {
       const { data } = await API.post('/auth/register/complete', { sessionId, otp });
       localStorage.setItem('cf_token', data.token);
       localStorage.setItem('cf_user', JSON.stringify(data.user));
+      API.defaults.headers.common.Authorization = `Bearer ${data.token}`;
+      let authUser = data.user;
+      const pendingPhotos = JSON.parse(sessionStorage.getItem('cf_pending_signup_photos') || '[]');
+      if (pendingPhotos.length) {
+        try {
+          const profile = await API.put('/auth/profile', { photos: pendingPhotos });
+          if (profile.data?.user) {
+            authUser = profile.data.user;
+          }
+        } catch {
+          toast.error('Account created. Photo upload can be completed in settings.');
+        } finally {
+          sessionStorage.removeItem('cf_pending_signup_photos');
+        }
+      }
+      setAuth(data.token, authUser);
       toast.success('Welcome to CoachFlow AI! 🎉');
       navigate('/dashboard');
     } catch (err) {
@@ -130,7 +171,7 @@ export default function Register() {
       const { data } = await API.post('/auth/register/initiate', {
         ...form,
         email: form.email.trim().toLowerCase(),
-        photos,
+        photos: [],
       });
       setSessionId(data.sessionId);
       if (data.devOTP) setDevOTP(data.devOTP);

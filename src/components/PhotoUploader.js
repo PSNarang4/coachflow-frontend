@@ -17,8 +17,8 @@ const processImage = (file) =>
       const img = new Image();
       img.onload = () => {
         // Target 9:16 portrait ratio
-        const TARGET_W = 1080;
-        const TARGET_H = 1920;
+        const TARGET_W = 720;
+        const TARGET_H = 1280;
         const targetRatio = TARGET_W / TARGET_H; // = 0.5625
 
         const srcW = img.width;
@@ -41,7 +41,7 @@ const processImage = (file) =>
         canvas.width  = TARGET_W;
         canvas.height = TARGET_H;
         canvas.getContext('2d').drawImage(img, cropX, cropY, cropW, cropH, 0, 0, TARGET_W, TARGET_H);
-        resolve(canvas.toDataURL('image/jpeg', 0.88));
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
       };
       img.onerror = () => reject('Failed to load image.');
       img.src = e.target.result;
