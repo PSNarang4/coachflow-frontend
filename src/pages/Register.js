@@ -22,7 +22,7 @@ const PASSWORD_RULES = [
   { re: /[A-Z]/,                                         label: 'Uppercase'       },
   { re: /[a-z]/,                                         label: 'Lowercase'       },
   { re: /[0-9]/,                                         label: 'Number'          },
-  { re: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/,        label: 'Special char'    },
+  { re: /[^a-zA-Z0-9\s]/,                                label: 'Special char'    },
 ];
 
 const PasswordStrength = ({ password }) => {
