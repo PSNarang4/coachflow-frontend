@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
-import toast from 'react-hot-toast';
+
 import './Subscription.css';
 
 const RAZORPAY_LINK = process.env.REACT_APP_RAZORPAY_LINK || 'https://rzp.io/l/coachflow';

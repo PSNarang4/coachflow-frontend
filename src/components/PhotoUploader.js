@@ -102,7 +102,7 @@ export default function PhotoUploader({ photos, onChange, label = 'Upload your p
       <div className="photo-grid-vertical">
         {photos.map((src, i) => (
           <div key={i} className="photo-slot-vertical photo-slot-filled-v">
-            <img src={src} alt={`photo ${i+1}`} />
+            <img src={src} alt={`User upload ${i+1}`} />
             <button className="photo-remove" onClick={() => remove(i)} type="button">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>

@@ -19,7 +19,7 @@ const PASSWORD_RULES = [
   { re: /[A-Z]/,                                         label: 'Uppercase'       },
   { re: /[a-z]/,                                         label: 'Lowercase'       },
   { re: /[0-9]/,                                         label: 'Number'          },
-  { re: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,        label: 'Special char'    },
+  { re: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/,        label: 'Special char'    },
 ];
 
 const PasswordStrength = ({ password }) => {
@@ -53,7 +53,7 @@ const stepVariants = {
 };
 
 export default function ForgotPassword() {
-  const navigate = useNavigate();
+
   const [step, setStep]       = useState(1); // 1=email, 2=otp, 3=new password, 4=success
   const [email, setEmail]     = useState('');
   const [otp, setOtp]         = useState('');
