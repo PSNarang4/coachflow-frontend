@@ -58,13 +58,14 @@ export default function AccountSettings() {
       } finally { setEmailLoading(false); }
       return;
     }
-    if (!newEmail || newEmail === user?.email) { toast.error('Enter a new email address'); return; }
+    const cleanEmail = newEmail.trim().toLowerCase();
+    if (!cleanEmail || cleanEmail === user?.email) { toast.error('Enter a new email address'); return; }
     setEmailLoading(true);
     try {
-      const { data } = await API.post('/auth/send-otp', { type: 'email', value: newEmail });
+      const { data } = await API.post('/auth/send-otp', { type: 'email', value: cleanEmail });
       setEmailOTPSent(true);
       setEmailVerified(false);
-      toast.success(`OTP sent to ${newEmail}${data.devOTP ? ` (dev: ${data.devOTP})` : ''}`);
+      toast.success(`OTP sent to ${cleanEmail}${data.devOTP ? ` (dev: ${data.devOTP})` : ''}`);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to send OTP');
     } finally { setEmailLoading(false); }
@@ -78,7 +79,7 @@ export default function AccountSettings() {
 
       if (newEmail !== user?.email) {
         if (!emailVerified) { toast.error('Please verify new email first'); setSaving(false); return; }
-        payload.email    = newEmail;
+        payload.email    = newEmail.trim().toLowerCase();
         payload.emailOTP = emailOTP;
       }
 

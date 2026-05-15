@@ -90,6 +90,7 @@ export default function Register() {
     try {
       const { data } = await API.post('/auth/register/initiate', {
         ...form,
+        email: form.email.trim().toLowerCase(),
         photos: skipPhotos ? [] : photos,
       });
       setSessionId(data.sessionId);
@@ -126,7 +127,11 @@ export default function Register() {
     if (resendCooldown > 0) return;
     setLoading(true);
     try {
-      const { data } = await API.post('/auth/register/initiate', { ...form, photos });
+      const { data } = await API.post('/auth/register/initiate', {
+        ...form,
+        email: form.email.trim().toLowerCase(),
+        photos,
+      });
       setSessionId(data.sessionId);
       if (data.devOTP) setDevOTP(data.devOTP);
       startCooldown();

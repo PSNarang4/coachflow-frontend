@@ -1,15 +1,26 @@
 import axios from 'axios';
 
-// Auto-detects API URL from browser hostname — works for localhost AND network IP
+const PROD_API_URL = 'https://coachflow-backend.onrender.com/api';
+
+const normalizeBaseURL = (url) => {
+  if (!url) return '';
+  const clean = String(url).trim().replace(/^['"]|['"]$/g, '').replace(/\/+$/, '');
+  return clean.endsWith('/api') ? clean : `${clean}/api`;
+};
+
+// Auto-detects API URL from browser hostname and falls back to Render in production.
 const getBaseURL = () => {
-  if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
+  if (process.env.REACT_APP_API_URL) return normalizeBaseURL(process.env.REACT_APP_API_URL);
   const { protocol, hostname } = window.location;
+  if (hostname.endsWith('.vercel.app') || hostname.includes('coachflow-frontend')) {
+    return PROD_API_URL;
+  }
   return `${protocol}//${hostname}:5000/api`;
 };
 
 const API = axios.create({
   baseURL: getBaseURL(),
-  timeout: 60000, // 60s — photo uploads to Cloudinary can take time
+  timeout: 60000,
 });
 
 // Attach JWT token on every request
@@ -25,9 +36,16 @@ API.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
     const code   = error.response?.data?.code;
+    const data   = error.response?.data;
 
-    // 401 = token expired/invalid → force logout
-    if (status === 401) {
+    if (data && !data.message && data.error) {
+      data.message = data.error;
+    }
+
+    // 401 from protected routes = token expired/invalid. Login failures stay on the form.
+    const requestUrl = error.config?.url || '';
+    const isLoginAttempt = requestUrl.includes('/auth/login');
+    if (status === 401 && !isLoginAttempt) {
       localStorage.removeItem('cf_token');
       localStorage.removeItem('cf_user');
       localStorage.removeItem('fitlead_token');
@@ -36,9 +54,7 @@ API.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 402 = subscription required
-    // The SubscriptionGate component handles this visually.
-    // We just let the error propagate — callers can handle if needed.
+    // 402 = subscription required. The SubscriptionGate component handles this visually.
     if (status === 402) {
       console.warn(`[CoachFlow] Subscription required (${code})`);
     }

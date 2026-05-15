@@ -79,7 +79,7 @@ export default function ForgotPassword() {
     if (!email.trim()) { toast.error('Please enter your email'); return; }
     setLoading(true);
     try {
-      const { data } = await API.post('/auth/forgot-password', { email });
+      const { data } = await API.post('/auth/forgot-password', { email: email.trim().toLowerCase() });
       if (data.devOTP) setDevOTP(data.devOTP);
       startCooldown();
       toast.success('OTP sent to your email!');
@@ -95,7 +95,7 @@ export default function ForgotPassword() {
     if (!otp || otp.length !== 6) { toast.error('Enter the 6-digit OTP'); return; }
     setLoading(true);
     try {
-      await API.post('/auth/forgot-password/verify-otp', { email, otp });
+      await API.post('/auth/forgot-password/verify-otp', { email: email.trim().toLowerCase(), otp });
       toast.success('OTP verified!');
       setStep(3);
     } catch (err) {
@@ -111,7 +111,11 @@ export default function ForgotPassword() {
     if (!isPasswordValid()) { toast.error('Password does not meet requirements'); return; }
     setLoading(true);
     try {
-      await API.post('/auth/forgot-password/reset', { email, newPassword, confirmPassword });
+      await API.post('/auth/forgot-password/reset', {
+        email: email.trim().toLowerCase(),
+        newPassword,
+        confirmPassword,
+      });
       toast.success('Password reset successfully! 🎉');
       setStep(4);
     } catch (err) {
@@ -124,7 +128,7 @@ export default function ForgotPassword() {
     if (resendCooldown > 0) return;
     setLoading(true);
     try {
-      const { data } = await API.post('/auth/forgot-password', { email });
+      const { data } = await API.post('/auth/forgot-password', { email: email.trim().toLowerCase() });
       if (data.devOTP) setDevOTP(data.devOTP);
       startCooldown();
       toast.success('New OTP sent!');

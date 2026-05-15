@@ -44,7 +44,7 @@ export default function Login() {
     if (!form.email || !form.password) { toast.error('Please fill in all fields'); return; }
     setLoading(true);
     try {
-      const result = await login(form.email, form.password);
+      const result = await login(form.email.trim().toLowerCase(), form.password);
       if (result?.requiresOTP) {
         setUserId(result.userId);
         setOtpStage(true);
@@ -64,7 +64,7 @@ export default function Login() {
     if (resendCooldown > 0) return;
     setLoading(true);
     try {
-      const result = await login(form.email, form.password);
+      const result = await login(form.email.trim().toLowerCase(), form.password);
       if (result.devOTP) setDevOTP(result.devOTP);
       startCooldown();
       toast.success('New OTP sent!');
