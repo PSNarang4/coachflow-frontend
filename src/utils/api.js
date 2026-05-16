@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const PROD_API_URL = 'https://coachflow-backend.onrender.com/api';
+const PROD_API_URL = 'https://coachflow-backend-1cd6.onrender.com/api';
 
 const normalizeBaseURL = (url) => {
   if (!url) return '';
