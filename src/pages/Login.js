@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -20,11 +20,15 @@ const stepVariants = {
   exit: { opacity: 0, x: -30, filter: 'blur(4px)', transition: { duration: 0.25 } },
 };
 
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
 export default function Login() {
-  const { login, verifyLoginOTP } = useAuth();
+  const { login, verifyLoginOTP, googleLogin } = useAuth();
   const navigate = useNavigate();
+  const googleButtonRef = useRef(null);
   const [form, setForm]         = useState({ email: '', password: '' });
   const [loading, setLoading]   = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [otpStage, setOtpStage] = useState(false);
   const [userId, setUserId]     = useState(null);
   const [devOTP, setDevOTP]     = useState('');
@@ -32,6 +36,64 @@ export default function Login() {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleGoogleCredential = useCallback(async (response) => {
+    if (!response?.credential) {
+      toast.error('Google sign-in failed. Please try again.');
+      return;
+    }
+
+    setGoogleLoading(true);
+    try {
+      await googleLogin(response.credential);
+      toast.success('Welcome back!');
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Google sign-in failed');
+    } finally {
+      setGoogleLoading(false);
+    }
+  }, [googleLogin, navigate]);
+
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID || otpStage) return undefined;
+
+    let cancelled = false;
+    const renderGoogleButton = () => {
+      if (cancelled || !window.google?.accounts?.id || !googleButtonRef.current) return;
+
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential,
+      });
+
+      googleButtonRef.current.innerHTML = '';
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: 'filled_black',
+        size: 'large',
+        shape: 'rectangular',
+        text: 'continue_with',
+        width: googleButtonRef.current.offsetWidth || 360,
+      });
+    };
+
+    if (window.google?.accounts?.id) {
+      renderGoogleButton();
+    } else {
+      const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (existing) existing.addEventListener('load', renderGoogleButton, { once: true });
+      else {
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = renderGoogleButton;
+        document.head.appendChild(script);
+      }
+    }
+
+    return () => { cancelled = true; };
+  }, [handleGoogleCredential, otpStage]);
 
   const startCooldown = () => {
     let t = 60;
@@ -115,6 +177,29 @@ export default function Login() {
                 <h1>Welcome back</h1>
                 <p>Sign in to manage your leads. An OTP will be sent to your email for security.</p>
               </div>
+              <div className="auth-oauth-section">
+                {GOOGLE_CLIENT_ID ? (
+                  <div className="auth-google-wrap">
+                    <div ref={googleButtonRef} className="auth-google-button" />
+                    {googleLoading && (
+                      <div className="auth-google-loading">
+                        <span className="spinner" />
+                        Signing in...
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="auth-oauth-fallback"
+                    onClick={() => toast.error('Google sign-in is not configured yet.')}
+                  >
+                    <span className="auth-google-mark">G</span>
+                    <span>Continue with Google</span>
+                  </button>
+                )}
+                <div className="auth-or-divider"><span>or</span></div>
+              </div>
               <form onSubmit={handleSubmit} className="auth-form">
                 <div className="form-group">
                   <label className="form-label">Email</label>
@@ -183,7 +268,7 @@ export default function Login() {
         </AnimatePresence>
 
         <p className="auth-footer-text">
-          Don't have an account? <Link to="/register" className="auth-link">Create one free</Link>
+          Don't have an account? <Link to="/register" className="auth-link">Start free trial</Link>
         </p>
       </motion.div>
     </div>

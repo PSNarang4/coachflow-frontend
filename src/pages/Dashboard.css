@@ -10,7 +10,7 @@
 ══════════════════════════════════════════ */
 
 .dashboard {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -28,6 +28,9 @@
    HERO — full photo + info below
 ══════════════════════════════════════ */
 .coach-hero {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1fr);
+  align-items: stretch;
   border-radius: var(--radius-xl);
   overflow: hidden;
   background: var(--surface);
@@ -38,18 +41,18 @@
 .coach-hero-photo {
   position: relative;
   width: 100%;
-  /* 3:2 ratio shows a vertical photo fully from top to waist */
-  aspect-ratio: 3 / 2;
+  min-height: 360px;
   overflow: hidden;
   background: var(--bg-primary);
-  min-height: 220px;
+  border-right: 1px solid var(--border);
 }
 
 .coach-hero-layer {
   position: absolute; inset: 0;
-  background-size: cover;
+  background-size: contain;
   /* top — shows face/top of body */
-  background-position: center top;
+  background-position: center center;
+  background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 1.4s ease;
 }
@@ -61,11 +64,11 @@
   background:
     linear-gradient(
       to bottom,
-      transparent 45%,
-      rgba(10,10,15,0.6) 80%,
-      rgba(22,22,31,1.0) 100%
+      rgba(10,10,15,0.08) 0%,
+      transparent 44%,
+      rgba(10,10,15,0.28) 100%
     ),
-    radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%);
+    radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,0.34) 100%);
   pointer-events: none;
 }
 
@@ -96,10 +99,11 @@
 
 /* ── Info block below the hero photo ── */
 .coach-info-below {
-  padding: 20px 24px 22px;
+  padding: 28px 30px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  justify-content: center;
 }
 
 .coach-greeting {
@@ -108,7 +112,7 @@
 }
 .coach-name {
   font-family: var(--font-display);
-  font-size: 30px; letter-spacing: 0.04em;
+  font-size: 36px; letter-spacing: 0.04em;
   color: #fff; line-height: 1; margin: 0;
 }
 .coach-biz    { font-size: 13px; color: var(--text-muted); }
@@ -296,13 +300,20 @@
    RESPONSIVE
 ══════════════════════════════════════ */
 @media (max-width: 900px) {
-  .coach-hero-photo { aspect-ratio: 16 / 9; }
+  .coach-hero {
+    grid-template-columns: 1fr;
+  }
+  .coach-hero-photo {
+    min-height: 520px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
   .dashboard-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
   /* On phones: compact hero — stats visible above fold */
-  .coach-hero-photo { aspect-ratio: 21 / 9; min-height: 140px; }
+  .coach-hero-photo { min-height: 86vw; max-height: 560px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .stat-value { font-size: 26px; }
   .stat-card  { padding: 14px 12px; }
@@ -311,7 +322,7 @@
   /* Hide separators on mobile to prevent ugly stacking */
   .coach-mini-sep { display: none; }
   .coach-info-below { padding: 14px 16px 16px; gap: 8px; }
-  .coach-name { font-size: 22px; }
+  .coach-name { font-size: 24px; }
   .card { padding: 16px; }
   .coach-greeting { font-size: 10px; }
   .coach-biz { font-size: 12px; }
@@ -319,7 +330,7 @@
 }
 
 @media (max-width: 420px) {
-  .coach-hero-photo { aspect-ratio: 3 / 1; min-height: 120px; }
+  .coach-hero-photo { min-height: 92vw; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .coach-mini-stat { padding: 6px 8px; }
   .coach-mini-val  { font-size: 18px; }

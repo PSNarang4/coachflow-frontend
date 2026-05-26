@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import API from '../utils/api';
 import toast from 'react-hot-toast';
 import './Contact.css';
 import LogoIcon from '../assets/LogoIcon';
+import { getLocalizedSubscriptionPrice } from '../utils/pricing';
 
 const CONTACT = {
   email:    'prabhnarang.business@gmail.com',
@@ -11,7 +12,7 @@ const CONTACT = {
 };
 
 // FAQs written for fitness coaches — not tech questions
-const FAQS = [
+const getFaqs = price => [
   {
     q: 'I am already managing leads on WhatsApp and Excel. Why should I switch?',
     a: 'WhatsApp and Excel work until they don\'t — leads get buried in chats, follow-ups are forgotten, and you never know your actual conversion rate. CoachFlow AI gives you one place for every lead, automatic scoring to tell you who\'s most likely to convert, and AI-written WhatsApp replies so you spend less time typing and more time coaching.',
@@ -38,11 +39,11 @@ const FAQS = [
   },
   {
     q: 'Can I try it before paying anything?',
-    a: 'Yes — 14 days completely free, no card required. You get full access to every feature during the trial. After 14 days, it\'s ₹500/month to continue.',
+    a: `Yes - 7 days completely free, no card required. You get full access to every feature during the trial. After 7 days, it is ${price.monthlyLabel} to continue.`,
   },
   {
-    q: 'I already paid a lot for a website and social media management. Is this worth ₹500 more?',
-    a: '₹500 is less than the profit from a single client. If CoachFlow AI helps you close even one extra client per month — which most coaches do — it pays for itself 10x over.',
+    q: `I already paid a lot for a website and social media management. Is this worth ${price.formatted} more?`,
+    a: `${price.formatted} is less than the profit from a single client. If CoachFlow AI helps you close even one extra client per month, it pays for itself many times over.`,
   },
 ];
 
@@ -62,6 +63,8 @@ export default function Contact() {
   const [sending, setSending] = useState(false);
   const [sent, setSent]       = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
+  const localPrice = useMemo(() => getLocalizedSubscriptionPrice(), []);
+  const faqs = useMemo(() => getFaqs(localPrice), [localPrice]);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -265,7 +268,7 @@ export default function Contact() {
           {/* FAQs */}
           <div className="contact-faq">
             <h3 className="contact-faq-title">Questions coaches ask us</h3>
-            {FAQS.map((item, i) => (
+            {faqs.map((item, i) => (
               <div key={i} className={`contact-faq-item ${openFaq === i ? 'contact-faq-open' : ''}`}>
                 <button className="contact-faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)} type="button">
                   <span>{item.q}</span>

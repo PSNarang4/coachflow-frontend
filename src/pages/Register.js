@@ -227,7 +227,7 @@ export default function Register() {
           <>
             <div className="auth-header">
               <h1>Create account</h1>
-              <p>Start managing your leads — free forever.</p>
+              <p>Start managing your leads — with a 7-day free trial.</p>
             </div>
             <form onSubmit={handleStep1} className="auth-form">
               <div className="form-row">

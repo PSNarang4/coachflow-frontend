@@ -28,7 +28,12 @@
   50%      { box-shadow: 0 0 0 4px rgba(255,159,71,0.15); }
 }
 
-.sub-banner-icon { font-size: 28px; flex-shrink: 0; }
+.sub-banner-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 18px; font-weight: 800;
+  color: #0a0a0f; background: var(--accent);
+}
 .sub-banner-text { flex: 1; display: flex; flex-direction: column; gap: 3px; }
 .sub-banner-text strong { font-size: 15px; color: #fff; font-weight: 700; }
 .sub-banner-text span   { font-size: 13px; color: rgba(255,255,255,0.5); }
@@ -90,12 +95,15 @@
   display: flex; align-items: flex-end; gap: 4px; margin-bottom: 16px;
 }
 .sub-currency { font-size: 24px; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
-.sub-amount   { font-family: var(--font-display); font-size: 64px; color: #fff; line-height: 1; letter-spacing: -0.02em; }
+.sub-amount   { font-family: var(--font-display); font-size: 64px; color: #fff; line-height: 1; letter-spacing: 0; }
+.sub-amount-local { font-size: 58px; overflow-wrap: anywhere; }
+.sub-price-row-local { align-items: flex-end; gap: 10px; }
 .sub-period-wrap { display: flex; flex-direction: column; padding-bottom: 8px; }
 .sub-period { font-size: 14px; color: rgba(255,255,255,0.5); }
-.sub-billed { font-size: 11px; color: rgba(255,255,255,0.3); }
+.sub-billed { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.35; max-width: 190px; }
 
-.sub-trial-pill {
+.sub-trial-pill,
+.sub-no-card-pill {
   display: inline-flex; align-items: center; gap: 7px;
   background: rgba(71,180,255,0.1); border: 1px solid rgba(71,180,255,0.2);
   border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
@@ -106,7 +114,12 @@
 
 .sub-features-list { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-direction: column; gap: 12px; }
 .sub-feature-item  { display: flex; align-items: flex-start; gap: 12px; }
-.sub-feature-icon  { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.sub-feature-icon  {
+  width: 24px; height: 24px; flex-shrink: 0; margin-top: 1px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 6px; background: rgba(232,255,71,0.1);
+  color: var(--accent); font-size: 10px; font-weight: 800;
+}
 .sub-feature-label { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3; }
 .sub-feature-desc  { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
 
@@ -118,6 +131,7 @@
   font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: 0.06em;
   transition: all 0.2s; box-shadow: 0 8px 32px rgba(232,255,71,0.3);
 }
+.sub-cta-btn span { min-width: 0; overflow-wrap: anywhere; }
 .sub-cta-btn:hover {
   transform: translateY(-2px); box-shadow: 0 12px 40px rgba(232,255,71,0.4);
   background: #f0ff60;
@@ -132,6 +146,13 @@
   font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
   color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 8px;
+}
+.sub-secure-note {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.3);
 }
 
 /* ── Compare column ── */
@@ -158,11 +179,44 @@
 .sub-compare-label { font-size: 13px; font-weight: 600; color: #fff; }
 .sub-compare-text  { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
 
+.sub-value-breakdown {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 18px;
+}
+.sub-value-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: rgba(255,255,255,0.64);
+  margin-bottom: 12px;
+}
+.sub-value-row {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.sub-value-row:first-of-type { border-top: 0; }
+.sub-value-amount {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1;
+}
+.sub-value-label {
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .sub-testimonial {
   background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px; padding: 20px; margin-top: 4px;
 }
-.sub-testi-stars { color: var(--accent); font-size: 16px; margin-bottom: 10px; letter-spacing: 2px; }
+.sub-testi-stars { color: var(--accent); font-size: 16px; margin-bottom: 10px; letter-spacing: 0; }
 .sub-testimonial p { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; font-style: italic; margin: 0 0 10px; }
 .sub-testi-name { font-size: 11px; color: rgba(255,255,255,0.3); font-weight: 600; }
 
@@ -208,7 +262,12 @@
 @media (max-width: 600px) {
   .sub-pricing-card { padding: 28px 20px; }
   .sub-amount { font-size: 52px; }
+  .sub-amount-local { font-size: 44px; }
+  .sub-price-row-local { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .sub-period-wrap { padding-bottom: 0; }
+  .sub-billed { max-width: none; }
   .sub-bottom-cta { padding: 36px 20px; }
   .sub-active-card { flex-wrap: wrap; }
   .sub-status-banner { flex-direction: column; align-items: flex-start; }
+  .sub-value-row { grid-template-columns: 1fr; gap: 4px; }
 }

@@ -127,9 +127,9 @@
 /* Photo fills the panel fully — shows the whole person */
 .pf-photo-layer {
   position: absolute; inset: 0;
-  background-size: cover;
-  /* Anchor near the top so face/head is always visible, crop from bottom */
-  background-position: center 20%;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 1.3s ease;
 }
@@ -142,10 +142,10 @@
     /* Bottom gradient for text legibility — starts much lower */
     linear-gradient(
       to top,
-      rgba(10,10,15,0.95) 0%,
-      rgba(10,10,15,0.70) 18%,
-      rgba(10,10,15,0.15) 35%,
-      transparent 50%
+      rgba(10,10,15,0.88) 0%,
+      rgba(10,10,15,0.54) 18%,
+      rgba(10,10,15,0.12) 34%,
+      transparent 48%
     ),
     /* Vignette edges */
     radial-gradient(
@@ -171,7 +171,7 @@
   font-size: 12px; color: rgba(255,255,255,0.6);
   line-height: 1.6; margin-bottom: 14px; max-width: 320px;
 }
-.pf-overlay-bullets { display: flex; flex-direction: column; gap: 7px; }
+.pf-overlay-bullets { display: none; flex-direction: column; gap: 7px; }
 .pf-overlay-bullet {
   font-size: 12px; color: rgba(255,255,255,0.75);
   background: rgba(255,255,255,0.07);

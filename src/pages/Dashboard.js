@@ -148,7 +148,7 @@ export default function Dashboard() {
             <div className="coach-link-row">
               <div className="coach-link-box"><span className="coach-link-text">{formLink}</span></div>
               <button className="btn btn-primary btn-sm" onClick={copyLink}>
-                {copied ? '✓ Copied' : 'Copy'}
+                {copied ? 'Copied' : 'Copy'}
               </button>
             </div>
           </div>
@@ -157,9 +157,18 @@ export default function Dashboard() {
             className="btn btn-primary"
             style={{marginTop:12,justifyContent:'center',display:'flex'}}
             onClick={() => navigate('/leads', { state: { openModal: true } })}
-          >+ Add Lead</button>
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add lead
+          </button>
           <Link to="/ai" className="btn btn-ghost" style={{marginTop:8,justifyContent:'center',display:'flex',fontSize:13}}>
-            ✨ Open AI Center
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+            Open AI Center
           </Link>
 
           <div className="coach-powered">
@@ -170,7 +179,7 @@ export default function Dashboard() {
       </div>
 
       {loading ? (
-        <div className="dashboard-loading"><div className="spinner" style={{width:28,height:28}}/><span>Loading…</span></div>
+        <div className="dashboard-loading"><div className="spinner" style={{width:28,height:28}}/><span>Loading...</span></div>
       ) : (
         <>
           <div className="stats-grid">
@@ -186,8 +195,8 @@ export default function Dashboard() {
           {aiSummary?.insights?.length > 0 && (
             <div className="dashboard-ai-teaser card">
               <div className="section-header">
-                <h3 className="section-title">✨ AI Insight of the Day</h3>
-                <Link to="/ai" className="btn btn-ghost btn-sm">Full AI Center →</Link>
+                <h3 className="section-title">AI Insight of the Day</h3>
+                <Link to="/ai" className="btn btn-ghost btn-sm">View AI Center</Link>
               </div>
               <div className="ai-teaser-insight">
                 <div className="ai-teaser-num">01</div>
@@ -243,7 +252,7 @@ export default function Dashboard() {
                         <span className={`badge badge-${lead.status}`}>{lead.status}</span>
                         {lead.aiScore !== null && lead.aiScore !== undefined && (
                           <span className="recent-score" style={{color: lead.aiScore>=75?'#47ffa4':lead.aiScore>=50?'#e8ff47':'#ff9f47'}}>
-                            ★{lead.aiScore}
+                            Score {lead.aiScore}
                           </span>
                         )}
                       </div>

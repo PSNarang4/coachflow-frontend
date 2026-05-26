@@ -41,10 +41,11 @@
 
 .photo-slot-filled-v {
   border: 2px solid rgba(232,255,71,0.25);
+  background: var(--bg-primary);
 }
 .photo-slot-filled-v img {
-  width: 100%; height: 100%; object-fit: cover;
-  object-position: center top; display: block;
+  width: 100%; height: 100%; object-fit: contain;
+  object-position: center center; display: block;
 }
 
 .photo-remove {

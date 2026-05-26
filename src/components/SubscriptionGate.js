@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../utils/api';
+import { getLocalizedSubscriptionPrice } from '../utils/pricing';
 import './SubscriptionGate.css';
 
 const SubContext = createContext(null);
@@ -75,6 +76,7 @@ export function GraceWarning() {
 // Trial countdown bar
 export function TrialBanner() {
   const { sub } = useSubscription();
+  const localPrice = useMemo(() => getLocalizedSubscriptionPrice(), []);
   if (sub?.state !== 'trial' || !sub?.daysLeft || sub.daysLeft > 7) return null;
 
   const urgent = sub.daysLeft <= 3;
@@ -87,7 +89,7 @@ export function TrialBanner() {
       <span>
         {urgent ? '⚠️ ' : '🎁 '}
         <strong>{sub.daysLeft} day{sub.daysLeft !== 1 ? 's' : ''} left</strong> in your free trial.{' '}
-        <Link to="/subscription">Subscribe for ₹500/month →</Link>
+        <Link to="/subscription">Subscribe for {localPrice.monthlyLabel}</Link>
       </span>
     </div>
   );
@@ -97,6 +99,7 @@ export function TrialBanner() {
 function Paywall({ sub }) {
   const RAZORPAY_LINK = process.env.REACT_APP_RAZORPAY_LINK || 'https://rzp.io/l/coachflow';
   const isTrialEnd = sub?.state === 'trial_expired';
+  const localPrice = useMemo(() => getLocalizedSubscriptionPrice(), []);
 
   return (
     <div className="paywall">
@@ -111,7 +114,7 @@ function Paywall({ sub }) {
         </div>
 
         <div className="paywall-badge">
-          {isTrialEnd ? '14-Day Trial Ended' : 'Subscription Required'}
+          {isTrialEnd ? '7-Day Trial Ended' : 'Subscription Required'}
         </div>
 
         <h2 className="paywall-title">
@@ -119,15 +122,17 @@ function Paywall({ sub }) {
         </h2>
 
         <p className="paywall-sub">
-          Subscribe for <strong>₹500/month</strong> to restore full access.
+          Subscribe for <strong>{localPrice.monthlyLabel}</strong> to restore full access.
           No hidden charges. Cancel anytime.
         </p>
 
         <div className="paywall-price-row">
-          <span className="paywall-price-currency">₹</span>
-          <span className="paywall-price-amount">500</span>
+          <span className="paywall-price-amount paywall-price-amount-local">{localPrice.formatted}</span>
           <span className="paywall-price-period">/month</span>
         </div>
+        {!localPrice.isInr && (
+          <p className="paywall-price-note">Approx. local price. Checkout is billed as {localPrice.baseFormatted}.</p>
+        )}
 
         <div className="paywall-features">
           {[
@@ -147,7 +152,7 @@ function Paywall({ sub }) {
         </div>
 
         <a className="paywall-cta" href={RAZORPAY_LINK} target="_blank" rel="noreferrer">
-          Subscribe Now — ₹500/month
+          Subscribe Now - {localPrice.monthlyLabel}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="5" y1="12" x2="19" y2="12"/>
             <polyline points="12 5 19 12 12 19"/>
