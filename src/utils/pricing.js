@@ -1,4 +1,4 @@
-export const SUBSCRIPTION_PRICE_INR = 500;
+export const SUBSCRIPTION_PRICE_INR = 499;
 
 const EURO_REGIONS = [
   'AT', 'BE', 'CY', 'DE', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'IE', 'IT',
