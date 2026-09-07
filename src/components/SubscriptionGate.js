@@ -97,7 +97,7 @@ export function TrialBanner() {
 
 // ── Full-page paywall ─────────────────────────────────────────────────────────
 function Paywall({ sub }) {
-  const RAZORPAY_LINK = process.env.REACT_APP_RAZORPAY_LINK || 'https://rzp.io/l/coachflow';
+  const RAZORPAY_LINK = process.env.REACT_APP_RAZORPAY_LINK || 'https://rzp.io/rzp/2UF21eXW';
   const isTrialEnd = sub?.state === 'trial_expired';
   const localPrice = useMemo(() => getLocalizedSubscriptionPrice(), []);
 

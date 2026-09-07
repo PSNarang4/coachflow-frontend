@@ -6,7 +6,7 @@ import { formatCurrency, getLocalizedSubscriptionPrice, SUBSCRIPTION_PRICE_INR }
 
 import './Subscription.css';
 
-const RAZORPAY_LINK = process.env.REACT_APP_RAZORPAY_LINK || 'https://rzp.io/l/coachflow';
+const RAZORPAY_LINK = process.env.REACT_APP_RAZORPAY_LINK || 'https://rzp.io/rzp/2UF21eXW';
 
 const FEATURES = [
   { icon: '01', label: 'Unlimited Leads', desc: 'Capture and manage as many prospects as you want' },
