@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
-import { formatCurrency, getLocalizedSubscriptionPrice } from '../utils/pricing';
+import { formatCurrency, getLocalizedSubscriptionPrice, SUBSCRIPTION_PRICE_INR } from '../utils/pricing';
 
 import './Subscription.css';
 
@@ -55,7 +55,7 @@ export default function Subscription() {
   const [openFaq, setOpenFaq] = useState(null);
   const localPrice = useMemo(() => getLocalizedSubscriptionPrice(), []);
   const faqs = useMemo(() => getFaqs(localPrice), [localPrice]);
-  const dailyInr = formatCurrency(5, 'INR', 'en-IN');
+  const dailyInr = formatCurrency(Math.round(SUBSCRIPTION_PRICE_INR / 30), 'INR', 'en-IN');
 
   useEffect(() => {
     API.get('/subscription/status')
